@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功夫熊貓語詞挑戰遊戲</title>
+    <style>
+        body { display: flex; flex-direction: column; height: 100dvh; margin: 0; font-family: 'Microsoft JhengHei', sans-serif; overflow: hidden; background-color: #f0f4f8; }
+        header { background: #5a2e00; color: white; padding: 10px; text-align: center; flex-shrink: 0; }
+        header h1 { margin: 5px 0; font-size: 1.5rem; }
+        header p { margin: 0; font-size: 0.9rem; color: #fdf5e6; }
+        #story-main { flex: 1; overflow-y: auto; padding: 20px; line-height: 2.2; font-size: 1.2rem; background: white; }
+        .drop-zone { border-bottom: 2px solid red; display: inline-block; min-width: 80px; text-align: center; line-height: 1.2; padding-bottom: 0px; vertical-align: bottom; color: #a0522d; font-weight: bold; cursor: pointer; }
+        footer { background: #fdf5e6; padding: 15px; border-top: 1px solid #d2b48c; flex-shrink: 0; }
+        #word-bank { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; justify-content: center; }
+        .word-item { background: white; border: 2px solid #a0522d; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 1rem; transition: 0.3s; }
+        .word-item:hover { background: #a0522d; color: white; }
+        .btn-group { display: flex; gap: 10px; justify-content: center; }
+        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; }
+        #check-btn { background-color: #2e8b57; }
+        #reset-btn { background-color: #a9a9a9; }
+        .correct { color: #2e8b57 !important; border-bottom-color: #2e8b57 !important; }
+        .wrong { color: #cc3333 !important; border-bottom-color: #cc3333 !important; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>功夫熊貓：語詞大冒險</h1>
+        <p>請將下方詞語點擊填入文中紅線空格</p>
+    </header>
+
+    <div id="story-main">
+        在古老的和平谷深處，有一座歷史悠久的玉皇宮，據說它的建造可追溯至遙遠的 <span class="drop-zone" data-ans="唐朝"></span>。大師們日復一日地在此修行，追求身心的寧靜。但對於神龍大俠阿寶來說，這種修行總是有點枯燥。
+        有一天，阿寶被師父指派了一項特別的任務：前往山腰上，尋訪一位隱居多年的「<span class="drop-zone" data-ans="幽人"></span>」。據說這位高人過著極為 <span class="drop-zone" data-ans="恬淡"></span> 的生活，不問世事，其智慧能幫助阿寶領悟功夫的更高境界。師父吩咐，必須在 <span class="drop-zone" data-ans="日暮"></span> 前將任務 <span class="drop-zone" data-ans="完畢"></span>，否則阿寶就得抄寫經文一百遍。
+        阿寶根據指引，在山徑中穿梭。漸漸地，周圍變得一片 <span class="drop-zone" data-ans="空曠"></span>，樹林稀疏。終於，他看見一間極為 <span class="drop-zone" data-ans="簡陋"></span> 的小屋，屋外圍著竹籬，一道斑駁的 <span class="drop-zone" data-ans="柴扉"></span> 虛掩著。正值 <span class="drop-zone" data-ans="傍晚"></span> 時分，柔和的夕陽灑落，屋內傳來陣陣輕柔的 <span class="drop-zone" data-ans="吟唱"></span> 聲，那是一種古老而平和的曲調，讓阿寶原本躁動的心也跟著感到一股 <span class="drop-zone" data-ans="閒適"></span>。他 <span class="drop-zone" data-ans="確定"></span> 這就是他要找的地方。
+        阿寶輕輕推開柴扉，看到了那位隱士。隱士沒有顯赫的 <span class="drop-zone" data-ans="官職"></span>，卻擁有超越一切的智慧。透過這次探訪，阿寶不僅完成了師父的任務，更從這位幽人身上學到了，真正的力量不只來自於武功，更來自於內心的平靜與對生活的熱愛。這趟旅程讓阿寶對「閒適」有了全新的理解。
+    </div>
+
+    <footer>
+        <div id="word-bank"></div>
+        <div class="btn-group">
+            <button id="check-btn" onclick="checkResults()">檢查任務結果</button>
+            <button id="reset-btn" onclick="resetGame()">重置</button>
+        </div>
+    </footer>
+
+    <script>
+        const words = ["唐朝", "幽人", "恬淡", "日暮", "完畢", "空曠", "簡陋", "柴扉", "傍晚", "吟唱", "閒適", "確定", "官職"];
+        const wordBank = document.getElementById('word-bank');
+        const zones = document.querySelectorAll('.drop-zone');
+        let selectedWord = null;
+
+        function init() {
+            wordBank.innerHTML = '';
+            words.sort(() => Math.random() - 0.5).forEach(word => {
+                const span = document.createElement('span');
+                span.className = 'word-item';
+                span.textContent = word;
+                span.onclick = () => { selectedWord = word; };
+                wordBank.appendChild(span);
+            });
+        }
+
+        zones.forEach(zone => {
+            zone.onclick = () => {
+                if (zone.textContent) { zone.textContent = ''; zone.className = 'drop-zone'; }
+                else if (selectedWord) { zone.textContent = selectedWord; selectedWord = null; }
+            };
+        });
+
+        function checkResults() {
+            let allCorrect = true;
+            zones.forEach(zone => {
+                if (zone.textContent === zone.getAttribute('data-ans')) { zone.classList.add('correct'); }
+                else { zone.classList.add('wrong'); allCorrect = false; }
+            });
+            if (allCorrect) alert('太棒了！阿寶完成了「閒適」修行！');
+        }
+
+        function resetGame() {
+            zones.forEach(zone => { zone.textContent = ''; zone.className = 'drop-zone'; });
+            selectedWord = null;
+            init();
+        }
+
+        init();
+    </script>
+</body>
+</html>
